@@ -1,0 +1,41 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: bitnami-oci
+  namespace: flux-system
+spec:
+  type: oci
+  url: oci://registry-1.docker.io/bitnamicharts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: redis-cluster
+  namespace: databases
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: redis-cluster
+      #version: 9.0.3 # optional, omit to always get latest
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-oci
+        namespace: flux-system
+  values:
+    auth:
+      existingSecret: redis-secret
+      existingSecretPasswordKey: redis-password
+    cluster:
+      enabled: true
+      slaveCount: 1
+    persistence:
+      enabled: true
+      size: 8Gi
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 512Mi
+        cpu: 500m
