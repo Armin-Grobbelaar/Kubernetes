@@ -1,0 +1,17 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: cluster-networking
+  name: metallb-ip-pool
+spec:
+  addresses:
+  - 192.168.10.240-192.168.10.250
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  namespace: cluster-networking
+  name: metallb-advertisement
+spec:
+  ipAddressPools:
+  - metallb-ip-pool
